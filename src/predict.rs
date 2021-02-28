@@ -23,13 +23,12 @@
  */
 
 use std::default::Default;
-use time;
+use hifitime::Epoch;
 use coordinates::LLA;
 
 use ::ffipredict;
 use ::tle;
 use ::sat::Sat;
-use ::julian_time::{julian_timestamp, julian_to_unix};
 
 pub type Location = LLA;
 
@@ -106,20 +105,20 @@ impl Predict {
         Predict{sat: sat, p_sat: sat_t, p_qth: qth}
     }
 
-    pub fn update(&mut self, timeoption: Option<time::Tm>) {
+    pub fn update(&mut self, timeoption: Option<Epoch>) {
         let juliantime = match timeoption {
-            Some(t) => julian_timestamp(t),
+            Some(t) => t.as_jde_tai_days(),
             None => unsafe {ffipredict::get_current_daynum()}
         };
 
         // we do not have AOS with some satellites, therefore option is used
         let aos = match unsafe {ffipredict::find_aos(&mut self.p_sat, &mut self.p_qth, juliantime, 1.0)} {
-            0.0 => None,
-            aos => Some(julian_to_unix(aos)),
+            n if n <= 0.0 => None,
+            aos => Some(Epoch::from_jde_tai(aos)),
         };
         let los = match unsafe {ffipredict::find_los(&mut self.p_sat, &mut self.p_qth, juliantime, 1.0)} {
-            0.0 => None,
-            los => Some(julian_to_unix(los)),
+            n if n <= 0.0 => None,
+            los => Some(Epoch::from_jde_tai(los)),
         };
 
         unsafe {ffipredict::predict_calc(&mut self.p_sat, &mut self.p_qth, juliantime)};

@@ -22,17 +22,17 @@
  * SOFTWARE.
  */
 
-use time;
+use hifitime::Epoch;
 use coordinates::LLA;
 
 
 #[derive(Default, Debug)]
 pub struct Sat {
     /// next AOS
-    pub aos:                Option<time::Tm>,
+    pub aos:                Option<Epoch>,
 
     /// next LOS
-    pub los:                Option<time::Tm>,
+    pub los:                Option<Epoch>,
 
     /// azimuth [deg]
     pub az_deg:             f64,

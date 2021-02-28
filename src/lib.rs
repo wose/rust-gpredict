@@ -26,13 +26,10 @@
 
 
 #[macro_use]
-extern crate log;
 extern crate libc;
-extern crate time;
-extern crate rustc_serialize;
+extern crate hifitime;
 extern crate coordinates;
 
-mod julian_time;
 mod sat;
 mod ffipredict;
 mod tle;

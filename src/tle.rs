@@ -33,12 +33,13 @@ use std::fs::File;
 use std::io::prelude::*;
 use std::io::BufReader;
 
-#[derive(Debug, Clone, PartialEq, RustcEncodable, RustcDecodable)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Tle {
     pub name: String,
     pub line1: String,
     pub line2: String,
 }
+
 impl Tle {
     pub fn from_file(tlename: &str, pathstr: &str) -> Result<Tle, String> {
         let path = Path::new(&pathstr);
@@ -90,7 +91,7 @@ fn trim(line: &String) -> String {
     let chars_to_trim: &[char] = &['\r', '\n'];
     let mut l: String;
     l = line.trim_matches(chars_to_trim).to_string();
-    l = l.trim_right().to_string();
+    l = l.trim_end().to_string();
     l
 }
 
